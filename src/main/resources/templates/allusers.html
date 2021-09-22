@@ -1,0 +1,187 @@
+<html>
+<head>
+<!-- Latest compiled JavaScript -->
+<!-- Latest compiled JavaScript -->
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<!-- Tell the browser to be responsive to screen width -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
+<!-- Ionicons -->
+<link rel="stylesheet"
+	href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="dist/css/adminlte.min.css">
+<!-- Google Font: Source Sans Pro -->
+<link
+	href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700"
+	rel="stylesheet">
+<!-- jQuery -->
+<script src="plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- ChartJS -->
+<script src="plugins/chart.js/Chart.min.js"></script>
+<!-- AdminLTE App -->
+<script src="dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="dist/js/demo.js"></script>
+<style>
+body {
+	background-color: #DCDCDC;
+	margin: 10px;
+}
+
+.card {
+	margin-top: 30px;
+	height: 200px;
+	background-color: white;
+	width: 500px;
+	padding: 10px;
+	border-radius: 7px;
+}
+
+.h4 {
+	margin: 20px;
+}
+
+.form-control {
+	width: 400px;
+	margin: 10px;
+}
+
+.table-dark {
+	margin-top: 40px;
+	color: white;
+	width: 700px;
+	border-radius: 7px;
+}
+
+.topnav {
+	overflow: hidden;
+	background-color: black;
+	display: block;
+	font-size: 20px;
+	margin: 0px;
+}
+
+.highlight {
+	background-color: white;
+	color: black;
+}
+
+.topnav a {
+	float: right;
+	display: inline;
+	color: White;
+	text-align: center;
+	padding: 10px;
+	text-decoration: none;
+	margin: 10px;
+}
+</style>
+</head>
+<body>
+	<div class="topnav"></div>
+	<div class=" text-center border-success">
+		<button class="btn btn-success    text-capitalize" id="add">Add
+			User</button>
+		<button class="btn btn-primary    text-capitalize" id="edit">edit
+			User</button>
+		<button class="btn btn-danger    text-capitalize" id="delete">Delete
+			User</button>
+	</div>
+	<table class="table table-dark container" id="mytable">
+		<thead>
+			<tr>
+				<th scope="col">Name</th>
+				<th scope="col">Email</th>
+				<th scope="col">address</th>
+			</tr>
+		</thead>
+		<tbody>
+
+
+		</tbody>
+
+	</table>
+
+
+</body>
+<script>
+	$(document).ready(
+			function() {
+
+				console.log("ready!");
+				var settings = {
+					"url" : "http://localhost:8088/api/hospitals/users",
+					"method" : "GET",
+					"timeout" : 0,
+				};
+
+				$.ajax(settings).done(
+						function(response) {
+							console.log(response);
+							$("table tbody").html('');
+							jQuery(response).each(
+									function(i, item) {
+										var markup = "<tr id="+item.id+"><td>"
+												+ item.name + "</td><td>"
+												+ item.email + "</td><td>"
+												+ item.address + "</td></tr>";
+										$("table tbody").append(markup);
+
+									})
+						});
+
+			});
+	$('#mytable').on('click', 'tbody tr', function(event) {
+		$(this).addClass('highlight').siblings().removeClass('highlight');
+	});
+
+	$('#add').on('click', function() {
+		window.location.href = "createUser.html";
+	});
+
+	function getRow() {
+		return $('table > tbody > tr.highlight');
+	}
+	$('#delete').click(
+			function(e) {
+				var selrow = getRow();
+
+				if (selrow != undefined) {
+
+					var settings = {
+						"url" : "http://localhost:8088/api/hospitals/delete/"
+								+ selrow.attr('id'),
+						"method" : "DELETE",
+						"timeout" : 0,
+					};
+
+					$.ajax(settings).done(function(response) {
+						if (response == true) {
+							window.location.href = "allusers.html";
+						}
+					});
+				}
+
+				else
+					alert('undefined');
+			});
+	
+	$('#edit').click(
+			function(e) {
+				var selrow = getRow();
+
+				if (selrow != undefined) {
+                     var id=selrow.attr('id')
+                     localStorage.setItem("id", id);
+                     window.location.href = "editUser.html";
+				}
+				else
+					alert('undefined');
+			});
+</script>
+</html>
